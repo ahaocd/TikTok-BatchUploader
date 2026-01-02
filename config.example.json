@@ -1,0 +1,29 @@
+{
+  "ai": {
+    "enabled": true,
+    "api_key": "sk-your-api-key-here",
+    "base_url": "https://api.siliconflow.cn/v1",
+    "model": "deepseek-ai/DeepSeek-V3",
+    "temperature": 0.7,
+    "max_tokens": 4000
+  },
+  "download": {
+    "count": 10
+  },
+  "upload": {
+    "delay_min": 3,
+    "delay_max": 8,
+    "stay_time_min": 20,
+    "stay_time_max": 60
+  },
+  "video": {
+    "ab_dedup_enabled": false,
+    "ab_dedup_fps": 60,
+    "use_gpu": true
+  },
+  "proxy": {
+    "enabled": false,
+    "http": "http://127.0.0.1:7897",
+    "https": "http://127.0.0.1:7897"
+  }
+}

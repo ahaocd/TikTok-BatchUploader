@@ -1,0 +1,15 @@
+{
+  "custom_tags": [
+    "#fyp",
+    "#viral",
+    "#trending",
+    "#foryou",
+    "#tiktok",
+    "#fypシ",
+    "#explore",
+    "#viralvideo",
+    "#trend",
+    "#funny"
+  ],
+  "ai_prompt_template": "Rewrite the video title to English. Keep it short, catchy, and engaging. Original title: {title}"
+}

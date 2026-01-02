@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok-BatchUploader | 完整控制面板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .main {
+            margin-top: 30px;
+            padding-bottom: 50px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: "";
+            display: block;
+            width: 4px;
+            height: 20px;
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .account-list {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .account-item {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .account-item:last-child {
+            border-bottom: none;
+        }
+
+        .account-info {
+            flex: 1;
+        }
+
+        .account-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .account-id {
+            font-size: 12px;
+            color: #718096;
+            font-family: monospace;
+        }
+
+        .account-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-online {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-offline {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-enabled {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .status-disabled {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .task-log {
+            background: #1a202c;
+            color: #48bb78;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: "Consolas", "Monaco", monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .task-log div {
+            margin-bottom: 5px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #bee3f8;
+            color: #2c5282;
+            border-left: 4px solid #3182ce;
+        }
+
+        .alert-success {
+            background: #c6f6d5;
+            color: #22543d;
+            border-left: 4px solid #38a169;
+        }
+
+        .alert-warning {
+            background: #feebc8;
+            color: #7c2d12;
+            border-left: 4px solid #dd6b20;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .help-text {
+            font-size: 12px;
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom-color: #667eea;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>TikTok-BatchUploader</h1>
+            <div class="subtitle">抖音到TikTok批量搬运系统 - 完整配置面板 | 云登指纹浏览器防封版</div>
+        </div>
+    </div>
+
+    <div class="container main">
+        <!-- 1. 系统状态概览 -->
+        <div class="card">
+            <div class="card-title">系统状态概览</div>
+            <div class="grid-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <div class="stat-number" id="stat-downloaded">0</div>
+                    <div class="stat-label">Downloaded池（抖音下载）</div>
+                    <button class="btn btn-primary btn-small" onclick="openFolder('downloaded')"
+                        style="margin-top: 10px;">打开文件夹</button>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                    <div class="stat-number" id="stat-videos">0</div>
+                    <div class="stat-label">videos池（本地视频）</div>
+                    <button class="btn btn-primary btn-small" onclick="openFolder('videos')"
+                        style="margin-top: 10px;">打开文件夹</button>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                    <div class="stat-number" id="stat-uploaded">0</div>
+                    <div class="stat-label">已上传</div>
+                </div>
+            </div>
+            <div style="margin-top: 15px;">
+                <span id="yunlogin-status">检查中...</span>
+            </div>
+        </div>
+
+        <!-- 标签页 - 调整顺序：任务执行放在最前面 -->
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('task')">任务执行</div>
+                <div class="tab" onclick="switchTab('video')">视频处理(AB帧)</div>
+                <div class="tab" onclick="switchTab('ai')">AI改写配置</div>
+                <div class="tab" onclick="switchTab('config')">系统配置</div>
+                <div class="tab" onclick="switchTab('accounts')">抖音账号管理</div>
+                <div class="tab" onclick="switchTab('schedule')">定时任务</div>
+            </div>
+
+            <!-- 视频处理(AB帧) -->
+            <div class="tab-content" id="tab-video">
+                <div class="alert alert-warning">
+                    <strong>AB帧视频去重说明：</strong><br>
+                    1. <strong>原理</strong>：混合视频A和视频B的帧序列，改变数据指纹避免平台检测<br>
+                    2. <strong>局限</strong>：即使87.5%去重率也可能看到视频B闪现<br>
+                    3. <strong>建议</strong>：建议结合其他预处理方法使用<br>
+                    4. <strong>视频B</strong>：默认使用项目内的video-B.mp4，可自定义上传
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">AB去重模式</label>
+                        <select id="ab-dedup-fps" class="form-input">
+                            <option value="60" selected>60fps - 50%去重（推荐，体积小）</option>
+                            <option value="120">120fps - 75%去重（平衡）</option>
+                            <option value="240">240fps - 87.5%去重（激进，体积大）</option>
+                        </select>
+                        <div class="help-text">帧率越高去重率越高，但文件体积越大</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">视频B文件</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="video-b-path" class="form-input"
+                                value="video_processing/vidieo-B.mp4" readonly style="flex: 1;">
+                            <button class="btn btn-primary btn-small" onclick="openVideoBFolder()">打开文件夹</button>
+                        </div>
+                        <div class="help-text">用于改变数据指纹的混合视频（默认使用项目内置）</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="enable-ab-dedup" checked>
+                            <label for="enable-ab-dedup">启用AB视频去重</label>
+                        </div>
+                        <div class="help-text">关闭后将使用原始预处理方法（淡入淡出+边框+噪声）</div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="enable-gpu" checked>
+                            <label for="enable-gpu">启用GPU加速（NVIDIA）</label>
+                        </div>
+                        <div class="help-text">需要NVIDIA显卡支持，加速视频处理速度</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">原始预处理参数（AB去重失败时回退）</label>
+                    <div class="grid-2">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="enable-fade" checked>
+                            <label for="enable-fade">淡入淡出效果（0.5秒）</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="enable-border" checked>
+                            <label for="enable-border">黑色半透明边框</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="enable-dynamic-corner" checked>
+                            <label for="enable-dynamic-corner">动态角标（右上角，几乎不可见）</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="enable-enhance" checked>
+                            <label for="enable-enhance">增强处理（裁剪/速度/颜色微调）</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveVideoConfig()">保存视频处理配置</button>
+            </div>
+
+            <!-- 系统配置 -->
+            <div class="tab-content" id="tab-config">
+                <div class="alert alert-info">
+                    配置说明：所有路径默认使用项目内路径。如需修改，请确保路径存在且有读写权限。
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">云登浏览器连接状态</label>
+                        <div style="display: flex; gap: 10px; align-items: flex-start;">
+                            <div id="yunlogin-path-status" class="form-input" style="flex: 1; background: #f7fafc; min-height: 38px; display: flex; align-items: center;">点击检查连接</div>
+                            <button class="btn btn-primary btn-small" onclick="checkYunLogin()"
+                                style="min-width: 90px;">检查连接</button>
+                        </div>
+                        <div class="help-text">云登浏览器需要先启动，点击"检查连接"测试API连通性</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">视频存储根目录</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="video-root-path" class="form-input"
+                                value="./videos" style="flex: 1;" readonly>
+                            <button class="btn btn-primary btn-small" onclick="openFolder('videos')"
+                                title="打开文件夹">打开</button>
+                        </div>
+                        <div class="help-text">本地视频存储目录</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Downloaded文件夹路径</label>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="downloaded-path" class="form-input"
+                                value="./douyin-downloader/Downloaded" style="flex: 1;" readonly>
+                            <button class="btn btn-primary btn-small" onclick="openFolder('downloaded')"
+                                title="打开文件夹">打开</button>
+                        </div>
+                        <div class="help-text">抖音下载器自动保存视频的路径</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveSystemConfig()">保存系统配置</button>
+            </div>
+
+            <!-- 抖音账号管理 -->
+            <div class="tab-content" id="tab-accounts">
+                <div class="alert alert-info">
+                    支持添加多个抖音账号。支持完整URL（https://www.douyin.com/user/...）或用户ID（MS4w...）。
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">添加抖音账号</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="account-name" class="form-input" placeholder="账号名称（如：美食博主A）"
+                            style="flex: 1;">
+                        <input type="text" id="account-url" class="form-input" placeholder="抖音主页URL或用户ID"
+                            style="flex: 2;">
+                        <button class="btn btn-success" onclick="addAccount()">添加账号</button>
+                    </div>
+                </div>
+
+                <div class="account-list" id="account-list">
+                    <div style="padding: 40px; text-align: center; color: #a0aec0;">
+                        暂无账号，请添加抖音账号
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI改写配置 -->
+            <div class="tab-content" id="tab-ai">
+                <div class="alert alert-warning">
+                    AI改写使用DeepSeek V3模型。标题语言可通过下方提示词模板自定义。标签必须在"自定义标签"中设置！
+                </div>
+
+                <div class="checkbox-group" style="margin-bottom: 20px;">
+                    <input type="checkbox" id="ai-enabled" checked>
+                    <label for="ai-enabled" class="form-label" style="margin: 0;">启用AI改写</label>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">API密钥</label>
+                        <input type="password" id="ai-api-key" class="form-input" placeholder="sk-your-api-key-here">
+                        <div class="help-text">SiliconFlow API密钥（https://siliconflow.cn）</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">API Base URL</label>
+                        <input type="text" id="ai-base-url" class="form-input" value="https://api.siliconflow.cn/v1">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">模型</label>
+                        <input type="text" id="ai-model" class="form-input" value="deepseek-ai/DeepSeek-V3.2-Exp">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">温度参数（0.0-1.0）</label>
+                        <input type="number" id="ai-temperature" class="form-input" value="0.7" min="0" max="1"
+                            step="0.1">
+                        <div class="help-text">越高越有创意，越低越稳定</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">AI提示词模板（可选，留空使用默认）</label>
+                    <textarea id="ai-prompt-template" class="form-textarea" style="min-height: 150px;" placeholder="根据原始标题改写一个新标题。
+
+要求：
+1. 8-20字，口语化
+2. 不要带#符号
+
+原始标题：{title}
+
+返回格式：{&quot;title&quot;:&quot;改写后的标题&quot;,&quot;tags&quot;:[]}"></textarea>
+                    <div class="help-text">支持变量：{title}、{description}。留空则使用简单默认提示词。</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">自定义标签（每行一个，以#开头）</label>
+                    <textarea id="custom-tags" class="form-textarea" placeholder="#标签1&#10;#标签2&#10;#tag3"
+                        style="min-height: 120px;"></textarea>
+                    <div class="help-text">程序会从这里随机选择3-5个标签。如果为空，视频将没有标签。</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">标签数量范围</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="number" id="tags-min" class="form-input" value="3" min="1" max="10"
+                            style="width: 100px;">
+                        <span>到</span>
+                        <input type="number" id="tags-max" class="form-input" value="5" min="1" max="10"
+                            style="width: 100px;">
+                        <span>个标签</span>
+                    </div>
+                    <div class="help-text">每个视频随机选择的标签数量</div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveAIConfig()">保存AI配置</button>
+            </div>
+
+            <!-- 定时任务配置 -->
+            <div class="tab-content" id="tab-schedule">
+                <div class="alert alert-info">
+                    配置自动下载和上传的时间策略。后台定时下载与上传任务并行运行，互不影响。
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label">后台下载间隔（小时）</label>
+                        <input type="number" id="download-interval" class="form-input" value="2" min="1" max="24">
+                        <div class="help-text">每隔多少小时自动下载一次新视频</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">每次下载数量</label>
+                        <input type="number" id="download-count" class="form-input" value="5" min="1" max="100">
+                        <div class="help-text">每个账号每次下载的视频数量（支持超过33个，自动翻页）</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">允许运行时间段（开始）</label>
+                        <input type="time" id="run-time-start" class="form-input" value="00:00">
+                        <div class="help-text">每天几点开始运行任务</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">允许运行时间段（结束）</label>
+                        <input type="time" id="run-time-end" class="form-input" value="23:59">
+                        <div class="help-text">每天几点停止运行任务</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">上传间隔（秒）</label>
+                        <input type="number" id="upload-delay" class="form-input" value="5" min="3" max="300">
+                        <div class="help-text">每个视频上传后等待时间（防封控）</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">模拟停留时间（秒）</label>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="stay-time-min" class="form-input" value="20" min="10" max="300"
+                                style="width: 100px;">
+                            <span>到</span>
+                            <input type="number" id="stay-time-max" class="form-input" value="60" min="10" max="300"
+                                style="width: 100px;">
+                            <span>秒</span>
+                        </div>
+                        <div class="help-text">上传成功后模拟真人查看页面的停留时间</div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="saveScheduleConfig()">保存定时配置</button>
+            </div>
+
+            <!-- 任务执行 - 默认显示 -->
+            <div class="tab-content active" id="tab-task">
+                <div class="alert alert-info">
+                    <strong>工作流程说明：</strong><br>
+                    1. <strong>视频来源</strong>：Downloaded池（抖音下载）+ videos池（本地视频）<br>
+                    2. <strong>上传逻辑</strong>：两个池轮流取视频上传（同等优先级）<br>
+                    3. <strong>后台下载</strong>：每2小时自动下载新视频，与上传并行运行
+                </div>
+
+                <div class="alert alert-warning" style="margin-top: 15px;">
+                    <strong>启动前检查：</strong><br>
+                    1. 云登浏览器已运行且至少有1个TikTok环境<br>
+                    2. 每个环境已手动登录TikTok一次<br>
+                    3. 代理IP已配置
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">上传视频来源</label>
+                    <select id="upload-pool-select" class="form-input">
+                        <option value="alternating" selected>轮流模式（Downloaded → videos → Downloaded → ...）【推荐】</option>
+                        <option value="downloaded">仅Downloaded池（抖音下载的视频）</option>
+                        <option value="videos">仅videos池（本地视频）</option>
+                    </select>
+                    <div class="help-text">选择上传视频的来源池，默认轮流上传保证多样性</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">后台自动下载</label>
+                    <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="enable-auto-download" checked>
+                            <label for="enable-auto-download">启用后台自动下载</label>
+                        </div>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <span>每</span>
+                            <input type="number" id="auto-download-interval" class="form-input" value="2" min="1"
+                                max="24" style="width: 70px;">
+                            <span>小时下载</span>
+                            <input type="number" id="download-count-per" class="form-input" value="5" min="1"
+                                max="100" style="width: 70px;">
+                            <span>个视频</span>
+                        </div>
+                        <button class="btn" onclick="preDownload()" id="btn-predownload"
+                            style="padding: 8px 16px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; font-size: 14px;">
+                            立即预下载
+                        </button>
+                    </div>
+                    <div class="help-text">后台定时从抖音下载新视频到Downloaded池 | 点击"立即预下载"可手动触发下载</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">操作</label>
+                    <div style="display: flex; gap: 15px; align-items: center; justify-content: center;">
+                        <button class="btn btn-primary" onclick="quickStart()" id="btn-start"
+                            style="min-width: 200px; font-size: 16px; padding: 12px 25px;">
+                            启动批量上传
+                        </button>
+                        <button class="btn btn-danger hidden" onclick="stopTask()" id="btn-stop"
+                            style="min-width: 200px; font-size: 16px; padding: 12px 25px;">
+                            停止任务
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card hidden" id="task-progress-card"
+                    style="margin-top: 20px; padding: 20px; background: #f7fafc;">
+                    <div class="card-title" style="color: #2d3748;">任务进度</div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%;">
+                            <span id="progress-percent">0%</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px; color: #718096; font-size: 14px;" id="progress-message">
+                        等待任务启动...
+                    </div>
+
+                    <div class="task-log" id="task-log" style="margin-top: 15px;">
+                        <div>任务日志将在这里显示...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5409/api';
+        let accounts = [];
+        let currentTab = 'config';
+
+        // ====================================================================
+        // 页面加载
+        // ====================================================================
+        window.onload = function () {
+            loadAllConfig();
+            loadYunLoginStatus();
+            loadAccounts();
+            loadStats();
+            loadCustomTags();
+            setupCustomTagsListener();
+            setupDownloadCountSync();
+        };
+
+        // ====================================================================
+        // 标签页切换
+        // ====================================================================
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+            currentTab = tabName;
+        }
+
+        // ====================================================================
+        // 加载所有配置
+        // ====================================================================
+        async function loadAllConfig() {
+            try {
+                const response = await fetch(`${API_BASE}/config`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const config = result.data;
+
+                    // AI配置
+                    document.getElementById('ai-enabled').checked = config.ai.enabled;
+                    document.getElementById('ai-api-key').value = config.ai.api_key || '';
+                    document.getElementById('ai-base-url').value = config.ai.base_url || 'https://api.siliconflow.cn/v1';
+                    document.getElementById('ai-model').value = config.ai.model || 'deepseek-ai/DeepSeek-V3.2-Exp';
+                    document.getElementById('ai-temperature').value = config.ai.temperature || 0.7;
+
+                    // 定时配置
+                    const downloadCount = config.download.count || 5;
+                    document.getElementById('download-count').value = downloadCount;
+                    document.getElementById('download-count-per').value = downloadCount;  // 同步到任务执行页面
+                    const avgDelay = (config.upload.delay_min + config.upload.delay_max) / 2;
+                    document.getElementById('upload-delay').value = Math.round(avgDelay);
+                    document.getElementById('stay-time-min').value = config.upload.stay_time_min || 20;
+                    document.getElementById('stay-time-max').value = config.upload.stay_time_max || 60;
+                    
+                    // 视频处理配置
+                    if (config.video) {
+                        document.getElementById('enable-ab-dedup').checked = config.video.ab_dedup_enabled || false;
+                        document.getElementById('ab-dedup-fps').value = config.video.ab_dedup_fps || 60;
+                        document.getElementById('enable-gpu').checked = config.video.use_gpu !== false;
+                    }
+                }
+            } catch (error) {
+                console.error('加载配置失败:', error);
+            }
+        }
+
+        // ====================================================================
+        // 云登状态
+        // ====================================================================
+        async function loadYunLoginStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/yunlogin/envs`);
+                const result = await response.json();
+
+                const statusDiv = document.getElementById('yunlogin-status');
+
+                if (result.success && result.data && result.data.length > 0) {
+                    statusDiv.innerHTML = `<span class="status-badge status-online">云登已连接</span> 找到 ${result.data.length} 个环境`;
+                } else {
+                    statusDiv.innerHTML = `<span class="status-badge status-offline">云登未连接</span> ${result.message || '请启动云登浏览器'}`;
+                }
+            } catch (error) {
+                document.getElementById('yunlogin-status').innerHTML =
+                    `<span class="status-badge status-offline">连接失败</span> 后端API未启动`;
+            }
+        }
+
+        // ====================================================================
+        // 统计数据
+        // ====================================================================
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    document.getElementById('stat-downloaded').textContent = result.data.downloaded;
+                    document.getElementById('stat-videos').textContent = result.data.videos;
+                    document.getElementById('stat-uploaded').textContent = result.data.uploaded;
+                }
+            } catch (error) {
+                console.error('加载统计失败:', error);
+            }
+        }
+
+        // ====================================================================
+        // 自定义标签管理
+        // ====================================================================
+        async function loadCustomTags() {
+            try {
+                const response = await fetch(`${API_BASE}/user-config`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    // 加载自定义标签（转换为多行文本）
+                    if (result.data.custom_tags && Array.isArray(result.data.custom_tags)) {
+                        const tagsText = result.data.custom_tags.join('\n');
+                        document.getElementById('custom-tags').value = tagsText;
+                    }
+
+                    // 加载AI提示词模板
+                    if (result.data.ai_prompt_template) {
+                        document.getElementById('ai-prompt-template').value = result.data.ai_prompt_template;
+                    }
+                }
+            } catch (error) {
+                console.error('加载用户配置失败:', error);
+            }
+        }
+
+        function setupCustomTagsListener() {
+            const tagsTextarea = document.getElementById('custom-tags');
+            if (tagsTextarea) {
+                // 监听输入事件，实时保存到后端
+                let saveTimeout;
+                tagsTextarea.addEventListener('input', function () {
+                    // 防抖：500ms后保存
+                    clearTimeout(saveTimeout);
+                    saveTimeout = setTimeout(async () => {
+                        try {
+                            await fetch(`${API_BASE}/user-config`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    custom_tags: this.value
+                                })
+                            });
+                        } catch (error) {
+                            console.error('保存自定义标签失败:', error);
+                        }
+                    }, 500);
+                });
+            }
+
+            // AI提示词模板也添加实时保存
+            const promptTextarea = document.getElementById('ai-prompt-template');
+            if (promptTextarea) {
+                let saveTimeout;
+                promptTextarea.addEventListener('input', function () {
+                    // 防抖：500ms后保存
+                    clearTimeout(saveTimeout);
+                    saveTimeout = setTimeout(async () => {
+                        try {
+                            await fetch(`${API_BASE}/user-config`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    ai_prompt_template: this.value
+                                })
+                            });
+                        } catch (error) {
+                            console.error('保存AI提示词失败:', error);
+                        }
+                    }, 500);
+                });
+            }
+        }
+
+        // ====================================================================
+        // 下载数量同步（定时任务页面 <-> 任务执行页面）
+        // ====================================================================
+        function setupDownloadCountSync() {
+            const downloadCount = document.getElementById('download-count');
+            const downloadCountPer = document.getElementById('download-count-per');
+            
+            if (downloadCount && downloadCountPer) {
+                // 定时任务页面修改时，同步到任务执行页面
+                downloadCount.addEventListener('change', function() {
+                    downloadCountPer.value = this.value;
+                });
+                
+                // 任务执行页面修改时，同步到定时任务页面
+                downloadCountPer.addEventListener('change', function() {
+                    downloadCount.value = this.value;
+                });
+            }
+        }
+
+        // ====================================================================
+        // 账号管理（同步到后端）
+        // ====================================================================
+        async function loadAccounts() {
+            // 1. 先读取本地localStorage (这是用户原本的数据)
+            const localSaved = localStorage.getItem('douyin_accounts');
+            let localAccounts = [];
+            if (localSaved) {
+                try {
+                    localAccounts = JSON.parse(localSaved);
+                    console.log('读取到本地缓存账号:', localAccounts.length);
+                } catch (e) {
+                    console.error('解析本地账号失败:', e);
+                }
+            }
+
+            try {
+                // 2. 尝试从后端加载
+                const response = await fetch(`${API_BASE}/accounts`);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    let remoteAccounts = result.data;
+
+                    // 3. 智能合并策略
+                    // 如果本地有数据，且后端只有默认示例账号(或者空)，则使用本地数据并同步
+                    const isRemoteDefault = remoteAccounts.length === 1 &&
+                        (remoteAccounts[0].sec_user_id === 'MS4wLjABAAAA...' || remoteAccounts[0].name === '示例账号');
+
+                    if (localAccounts.length > 0 && (remoteAccounts.length === 0 || isRemoteDefault)) {
+                        console.log('检测到本地有数据但后端使用了默认配置，正在同步本地数据到后端...');
+                        accounts = localAccounts;
+                        // 立即同步到后端
+                        saveAccountsToBackend();
+                    } else if (remoteAccounts.length > 0) {
+                        // 如果后端有真实数据，使用后端的（或者可以做合并去重，这里简化为优先信赖后端非默认数据）
+                        accounts = remoteAccounts;
+                        // 同时更新本地缓存
+                        localStorage.setItem('douyin_accounts', JSON.stringify(accounts));
+                    } else if (localAccounts.length > 0) {
+                        // 后端为空，使用本地
+                        accounts = localAccounts;
+                        saveAccountsToBackend();
+                    } else {
+                        // 都为空
+                        accounts = [];
+                    }
+
+                    renderAccounts();
+                    return;
+                }
+            } catch (error) {
+                console.error('从后端加载账号失败:', error);
+            }
+
+            // 4. 后端加载失败时，使用本地数据
+            if (localAccounts.length > 0) {
+                accounts = localAccounts;
+                renderAccounts();
+            }
+        }
+
+        async function saveAccountsToBackend() {
+            try {
+                await fetch(`${API_BASE}/accounts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ accounts: accounts })
+                });
+            } catch (error) {
+                console.error('同步账号到后端失败:', error);
+            }
+        }
+
+        function saveAccounts() {
+            // 同时保存到localStorage和后端
+            localStorage.setItem('douyin_accounts', JSON.stringify(accounts));
+            saveAccountsToBackend();
+        }
+
+        async function addAccount() {
+            const name = document.getElementById('account-name').value.trim();
+            const url = document.getElementById('account-url').value.trim();
+
+            if (!name || !url) {
+                alert('请输入账号名称和URL/ID');
+                return;
+            }
+
+            // 提取用户ID
+            let userId = url;
+            if (url.includes('douyin.com/user/')) {
+                const match = url.match(/\/user\/([^/?]+)/);
+                userId = match ? match[1] : url;
+            }
+
+            // 验证ID长度
+            if (userId.length < 20 || userId.includes('...')) {
+                alert('用户ID格式不正确！请输入完整的sec_user_id（至少20个字符）');
+                return;
+            }
+
+            // 调用后端API添加
+            try {
+                const response = await fetch(`${API_BASE}/accounts/add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: name, sec_user_id: userId })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    // 重新加载账号列表
+                    await loadAccounts();
+                    document.getElementById('account-name').value = '';
+                    document.getElementById('account-url').value = '';
+                } else {
+                    alert(`添加失败: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`添加账号失败: ${error.message}`);
+            }
+        }
+
+        function removeAccount(index) {
+            if (confirm('确定删除此账号？')) {
+                accounts.splice(index, 1);
+                saveAccounts();
+                renderAccounts();
+            }
+        }
+
+        function toggleAccount(index) {
+            accounts[index].enabled = !accounts[index].enabled;
+            saveAccounts();
+            renderAccounts();
+        }
+
+        function renderAccounts() {
+            const list = document.getElementById('account-list');
+
+            if (accounts.length === 0) {
+                list.innerHTML = '<div style="padding: 40px; text-align: center; color: #a0aec0;">暂无账号，请添加抖音账号</div>';
+                return;
+            }
+
+            list.innerHTML = accounts.map((acc, index) => `
+                <div class="account-item">
+                    <div class="account-info">
+                        <div class="account-name">${acc.name}</div>
+                        <div class="account-id">${acc.sec_user_id}</div>
+                        <div style="margin-top: 5px;">
+                            <span class="status-badge ${acc.enabled ? 'status-enabled' : 'status-disabled'}">
+                                ${acc.enabled ? '已启用' : '已禁用'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <button class="btn btn-small ${acc.enabled ? 'btn-danger' : 'btn-success'}"
+                                onclick="toggleAccount(${index})">
+                            ${acc.enabled ? '禁用' : '启用'}
+                        </button>
+                        <button class="btn btn-small btn-danger" onclick="removeAccount(${index})">删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ====================================================================
+        // 保存配置
+        // ====================================================================
+        async function saveSystemConfig() {
+            alert('系统配置已保存到本地存储');
+        }
+
+        async function saveAIConfig() {
+            const config = {
+                ai: {
+                    enabled: document.getElementById('ai-enabled').checked,
+                    api_key: document.getElementById('ai-api-key').value,
+                    base_url: document.getElementById('ai-base-url').value,
+                    model: document.getElementById('ai-model').value,
+                    temperature: parseFloat(document.getElementById('ai-temperature').value)
+                }
+            };
+
+            // 获取自定义标签（每行一个，转为数组）
+            const tagsText = document.getElementById('custom-tags').value;
+            const customTags = tagsText.split('\n').map(t => t.trim()).filter(t => t);
+            
+            // 获取AI提示词模板
+            const aiPromptTemplate = document.getElementById('ai-prompt-template').value.trim();
+
+            try {
+                // 1. 保存AI配置到config.json
+                const response1 = await fetch(`${API_BASE}/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                // 2. 保存自定义标签和提示词到user_config.json
+                const response2 = await fetch(`${API_BASE}/user-config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        custom_tags: customTags,
+                        ai_prompt_template: aiPromptTemplate
+                    })
+                });
+
+                const result1 = await response1.json();
+                const result2 = await response2.json();
+                
+                if (result1.success && result2.success) {
+                    alert('AI配置已保存（包括标签和提示词）');
+                } else {
+                    alert(`保存失败: ${result1.message || result2.message}`);
+                }
+            } catch (error) {
+                alert(`保存失败: ${error.message}`);
+            }
+        }
+
+        async function saveScheduleConfig() {
+            const downloadCount = parseInt(document.getElementById('download-count').value) || 5;
+            const uploadDelay = parseInt(document.getElementById('upload-delay').value) || 5;
+            const stayTimeMin = parseInt(document.getElementById('stay-time-min').value) || 20;
+            const stayTimeMax = parseInt(document.getElementById('stay-time-max').value) || 60;
+            
+            try {
+                const response = await fetch(`${API_BASE}/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        download: { count: downloadCount },
+                        upload: {
+                            delay_min: Math.max(3, uploadDelay - 2),
+                            delay_max: uploadDelay + 2,
+                            stay_time_min: stayTimeMin,
+                            stay_time_max: stayTimeMax
+                        }
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    // 同步到任务执行页面
+                    document.getElementById('download-count-per').value = downloadCount;
+                    alert('定时配置已保存');
+                } else {
+                    alert('保存失败: ' + result.message);
+                }
+            } catch (error) {
+                console.error('保存定时配置失败:', error);
+                alert('保存失败: ' + error.message);
+            }
+        }
+
+        async function saveVideoConfig() {
+            // 保存AB帧去重配置
+            const videoConfig = {
+                ab_dedup_enabled: document.getElementById('enable-ab-dedup').checked,
+                ab_dedup_fps: parseInt(document.getElementById('ab-dedup-fps').value),
+                use_gpu: document.getElementById('enable-gpu').checked
+            };
+
+            try {
+                // 发送到后端保存到config.json
+                const response = await fetch(`${API_BASE}/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ video: videoConfig })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('视频处理配置已保存');
+                } else {
+                    alert('保存失败: ' + result.message);
+                }
+            } catch (error) {
+                console.error('保存视频配置失败:', error);
+                alert('保存失败: ' + error.message);
+            }
+        }
+
+        async function checkYunLogin() {
+            const statusDiv = document.getElementById('yunlogin-path-status');
+            statusDiv.innerHTML = '<span style="color: #667eea;">正在检查连接...</span>';
+
+            try {
+                const response = await fetch(`${API_BASE}/yunlogin/envs`);
+                const result = await response.json();
+
+                if (result.success && result.data && result.data.length > 0) {
+                    statusDiv.innerHTML = `<span style="color: #48bb78;">连接成功！找到 ${result.data.length} 个环境</span>`;
+                } else {
+                    statusDiv.innerHTML = `<span style="color: #f56565;">${result.message || '云登浏览器未运行或未创建环境'}</span>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<span style="color: #f56565;">连接失败: ${error.message}</span>`;
+            }
+        }
+
+        async function openVideoBFolder() {
+            // 打开video_processing文件夹
+            try {
+                const response = await fetch(`${API_BASE}/open-folder`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path: './video_processing' })
+                });
+
+                const result = await response.json();
+                if (!result.success) {
+                    alert(`打开文件夹失败: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`打开文件夹失败: ${error.message}`);
+            }
+        }
+
+        // ====================================================================
+        // 打开文件夹（在Windows资源管理器中）
+        // ====================================================================
+        async function openFolder(type) {
+            let path;
+            if (type === 'downloaded') {
+                path = './douyin-downloader/Downloaded';
+            } else if (type === 'videos') {
+                path = './videos';
+            } else {
+                alert('无效的文件夹类型');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/open-folder`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ path })
+                });
+
+                const result = await response.json();
+                if (!result.success) {
+                    alert(`打开文件夹失败: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`打开文件夹失败: ${error.message}`);
+            }
+        }
+
+        // ====================================================================
+        // 任务执行
+        // ====================================================================
+        async function preDownload() {
+            // 仅下载视频，不启动上传
+            const count = parseInt(document.getElementById('download-count-per').value) || 5;
+            const btn = document.getElementById('btn-predownload');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = '⏳ 下载中...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE}/task/download`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ count })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert(`下载完成！成功: ${result.downloaded} 个视频`);
+                    loadStats(); // 刷新统计数据
+                } else {
+                    alert(`❌ 下载失败: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`❌ 下载失败: ${error.message}`);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function quickStart() {
+            // 直接启动任务，无需用户输入
+            const ai_enabled = document.getElementById('ai-enabled').checked;
+            const auto_download = document.getElementById('enable-auto-download').checked;
+            const download_interval = parseInt(document.getElementById('auto-download-interval').value) || 2;
+            const download_count = parseInt(document.getElementById('download-count-per').value) || 5;
+            const upload_pool = document.getElementById('upload-pool-select').value;  // 视频来源
+
+            try {
+                const response = await fetch(`${API_BASE}/task/start`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sec_user_id: '',  // 留空，后端会从账号管理读取
+                        count: download_count,
+                        ai_enabled,
+                        auto_download,
+                        download_interval,
+                        upload_pool  // 视频来源：alternating/downloaded/videos
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    document.getElementById('task-progress-card').classList.remove('hidden');
+                    document.getElementById('btn-start').classList.add('hidden');
+                    document.getElementById('btn-stop').classList.remove('hidden');
+
+                    startProgressPolling();
+                    addLog('任务已启动');
+                    addLog('Downloaded池: 等待统计...');
+                    addLog('videos池: 等待统计...');
+                    addLog('开始轮流上传视频...');
+                } else {
+                    alert(`启动失败: ${result.message}`);
+                }
+            } catch (error) {
+                alert(`启动任务失败: ${error.message}`);
+            }
+        }
+
+        async function stopTask() {
+            try {
+                const response = await fetch(`${API_BASE}/task/stop`, {
+                    method: 'POST'
+                });
+
+                const result = await response.json();
+                alert(result.success ? '停止信号已发送' : `停止失败: ${result.message}`);
+
+                if (result.success) {
+                    document.getElementById('btn-start').classList.remove('hidden');
+                    document.getElementById('btn-stop').classList.add('hidden');
+                    stopProgressPolling();
+                    addLog('任务已停止');
+                    loadStats(); // 刷新统计数据
+                }
+            } catch (error) {
+                alert(`停止任务失败: ${error.message}`);
+            }
+        }
+
+        // ====================================================================
+        // 进度轮询
+        // ====================================================================
+        let progressInterval = null;
+
+        function startProgressPolling() {
+            if (progressInterval) clearInterval(progressInterval);
+
+            progressInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/task/progress`);
+                    const result = await response.json();
+
+                    if (result.success && result.data) {
+                        const task = result.data;
+                        updateProgress(task);
+
+                        if (!task.running) {
+                            stopProgressPolling();
+                            document.getElementById('btn-start').classList.remove('hidden');
+                            document.getElementById('btn-stop').classList.add('hidden');
+                            addLog('任务已完成');
+                            loadStats(); // 刷新统计数据
+                        }
+                    }
+                } catch (error) {
+                    console.error('获取进度失败:', error);
+                }
+            }, 2000);
+        }
+
+        function stopProgressPolling() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function updateProgress(task) {
+            const percent = task.total > 0 ? Math.round((task.progress / task.total) * 100) : 0;
+
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-percent').textContent = percent + '%';
+            document.getElementById('progress-message').textContent =
+                `${task.message} (${task.progress}/${task.total})`;
+
+            if (task.message) {
+                addLog(task.message);
+            }
+        }
+
+        function addLog(message) {
+            const logDiv = document.getElementById('task-log');
+            const time = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `[${time}] ${message}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>

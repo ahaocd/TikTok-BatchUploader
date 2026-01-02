@@ -1,0 +1,33 @@
+{
+  "platforms": {
+    "小红书": {
+      "api_key": "小红书_API_KEY_PLACEHOLDER",
+      "secret": "小红书_SECRET_PLACEHOLDER",
+      "username": "小红书_USERNAME_PLACEHOLDER",
+      "enabled": true
+    },
+    "抖音": {
+      "api_key": "抖音_API_KEY_PLACEHOLDER",
+      "secret": "抖音_SECRET_PLACEHOLDER",
+      "username": "抖音_USERNAME_PLACEHOLDER",
+      "enabled": true
+    },
+    "B站": {
+      "api_key": "B站_API_KEY_PLACEHOLDER",
+      "secret": "B站_SECRET_PLACEHOLDER",
+      "username": "B站_USERNAME_PLACEHOLDER",
+      "enabled": true
+    },
+    "快手": {
+      "api_key": "快手_API_KEY_PLACEHOLDER",
+      "secret": "快手_SECRET_PLACEHOLDER",
+      "username": "快手_USERNAME_PLACEHOLDER",
+      "enabled": true
+    }
+  },
+  "settings": {
+    "auto_post": true,
+    "post_interval": 3600,
+    "content_filter": true
+  }
+}

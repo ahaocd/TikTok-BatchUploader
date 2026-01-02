@@ -1,0 +1,28 @@
+{
+  "content_types": [
+    "文章",
+    "视频",
+    "图片"
+  ],
+  "platforms": [
+    "小红书",
+    "抖音",
+    "B站",
+    "快手"
+  ],
+  "ai_models": [
+    "GPT",
+    "Claude"
+  ],
+  "templates": {
+    "文章": "文章_template.json",
+    "视频": "视频_template.json",
+    "图片": "图片_template.json"
+  },
+  "quality_thresholds": {
+    "min_length": 100,
+    "max_length": 2000,
+    "readability_score": 0.7,
+    "originality_score": 0.8
+  }
+}
